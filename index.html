@@ -308,27 +308,49 @@
     let playerAttacks = 0;
     let enemyAttacks = 0;
 
-    // Определяем, кто ходит первым
-    let first = p.инициатива >= e.инициатива ? "player" : "enemy";
-
     for (let i = 0; i < rounds; i++) {
-      // Атака игрока
-      if (p.сила > 0) {
-        e = attack(p, e);
-        playerAttacks++;
-        if (e.сила <= 0) {
-          winner = "Игрок";
-          break;
-        }
-      }
+      // Определяем, кто ходит первым в этой атаке
+      let first = p.инициатива >= e.инициатива ? "player" : "enemy";
 
-      // Атака противника
-      if (e.сила > 0) {
-        p = attack(e, p);
-        enemyAttacks++;
-        if (p.сила <= 0) {
-          winner = "Противник";
-          break;
+      if (first === "player") {
+        // Атака игрока
+        if (p.сила > 0) {
+          e = attack(p, e);
+          playerAttacks++;
+          if (e.сила <= 0) {
+            winner = "Игрок";
+            break;
+          }
+        }
+
+        // Атака противника
+        if (e.сила > 0) {
+          p = attack(e, p);
+          enemyAttacks++;
+          if (p.сила <= 0) {
+            winner = "Противник";
+            break;
+          }
+        }
+      } else {
+        // Атака противника
+        if (e.сила > 0) {
+          p = attack(e, p);
+          enemyAttacks++;
+          if (p.сила <= 0) {
+            winner = "Противник";
+            break;
+          }
+        }
+
+        // Атака игрока
+        if (p.сила > 0) {
+          e = attack(p, e);
+          playerAttacks++;
+          if (e.сила <= 0) {
+            winner = "Игрок";
+            break;
+          }
         }
       }
     }
