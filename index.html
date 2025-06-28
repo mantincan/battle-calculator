@@ -310,31 +310,27 @@
 
     // Определяем, кто ходит первым
     let first = p.инициатива >= e.инициатива ? "player" : "enemy";
-    let attacker, defender;
-
-    if (first === "player") {
-      attacker = p;
-      defender = e;
-    } else {
-      attacker = e;
-      defender = p;
-    }
 
     for (let i = 0; i < rounds; i++) {
-      // Атака текущего атакующего
-      if (attacker.сила > 0) {
-        defender = attack(attacker, defender);
-        if (attacker === p) playerAttacks++;
-        else enemyAttacks++;
-
-        if (defender.сила <= 0) {
-          winner = attacker === p ? "Игрок" : "Противник";
+      // Атака игрока
+      if (p.сила > 0) {
+        e = attack(p, e);
+        playerAttacks++;
+        if (e.сила <= 0) {
+          winner = "Игрок";
           break;
         }
       }
 
-      // Меняем местами атакующего и защищающегося
-      [attacker, defender] = [defender, attacker];
+      // Атака противника
+      if (e.сила > 0) {
+        p = attack(e, p);
+        enemyAttacks++;
+        if (p.сила <= 0) {
+          winner = "Противник";
+          break;
+        }
+      }
     }
 
     const resultDiv = document.getElementById('result');
