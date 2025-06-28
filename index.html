@@ -160,52 +160,52 @@
 
 <div class="calculator">
   <h2>Калькулятор боя</h2>
-  <form id="battleForm">
+  <form id="battleForm" onsubmit="return false;">
     <h3>Параметры Игрока:</h3>
     <div class="value-control">
       <label>СИЛА:</label>
-      <button onclick="updateValue('playerStr', -1)">-</button>
+      <button onclick="updateValue(event, 'playerStr', -1)">-</button>
       <span class="value-display" id="playerStrDisplay">8</span>
-      <button onclick="updateValue('playerStr', 1)">+</button>
+      <button onclick="updateValue(event, 'playerStr', 1)">+</button>
     </div>
     <div class="value-control">
       <label>ЗАЩИТА:</label>
-      <button onclick="updateValue('playerDef', -1)">-</button>
+      <button onclick="updateValue(event, 'playerDef', -1)">-</button>
       <span class="value-display" id="playerDefDisplay">10</span>
-      <button onclick="updateValue('playerDef', 1)">+</button>
+      <button onclick="updateValue(event, 'playerDef', 1)">+</button>
     </div>
     <div class="value-control">
       <label>ИНИЦИАТИВА:</label>
-      <button onclick="updateValue('playerInit', -1)">-</button>
+      <button onclick="updateValue(event, 'playerInit', -1)">-</button>
       <span class="value-display" id="playerInitDisplay">10</span>
-      <button onclick="updateValue('playerInit', 1)">+</button>
+      <button onclick="updateValue(event, 'playerInit', 1)">+</button>
     </div>
 
     <h3>Параметры Противника:</h3>
     <div class="value-control">
       <label>СИЛА:</label>
-      <button onclick="updateValue('enemyStr', -1)">-</button>
+      <button onclick="updateValue(event, 'enemyStr', -1)">-</button>
       <span class="value-display" id="enemyStrDisplay">11</span>
-      <button onclick="updateValue('enemyStr', 1)">+</button>
+      <button onclick="updateValue(event, 'enemyStr', 1)">+</button>
     </div>
     <div class="value-control">
       <label>ЗАЩИТА:</label>
-      <button onclick="updateValue('enemyDef', -1)">-</button>
+      <button onclick="updateValue(event, 'enemyDef', -1)">-</button>
       <span class="value-display" id="enemyDefDisplay">7</span>
-      <button onclick="updateValue('enemyDef', 1)">+</button>
+      <button onclick="updateValue(event, 'enemyDef', 1)">+</button>
     </div>
     <div class="value-control">
       <label>ИНИЦИАТИВА:</label>
-      <button onclick="updateValue('enemyInit', -1)">-</button>
+      <button onclick="updateValue(event, 'enemyInit', -1)">-</button>
       <span class="value-display" id="enemyInitDisplay">9</span>
-      <button onclick="updateValue('enemyInit', 1)">+</button>
+      <button onclick="updateValue(event, 'enemyInit', 1)">+</button>
     </div>
 
     <div class="value-control">
       <label>Количество АТАК:</label>
-      <button onclick="updateValue('rounds', -1)">-</button>
+      <button onclick="updateValue(event, 'rounds', -1)">-</button>
       <span class="value-display" id="roundsDisplay">4</span>
-      <button onclick="updateValue('rounds', 1)">+</button>
+      <button onclick="updateValue(event, 'rounds', 1)">+</button>
     </div>
 
     <button type="button" class="calculate" onclick="simulateBattle()">Рассчитать бой</button>
@@ -231,7 +231,9 @@
   let rounds = 4;
 
   // Обновляем отображение значений
-  function updateValue(key, delta) {
+  function updateValue(event, key, delta) {
+    event.preventDefault(); // Предотвращаем стандартное поведение
+
     if (key === 'playerStr') {
       player.сила = Math.max(0, player.сила + delta);
       document.getElementById('playerStrDisplay').innerText = player.сила;
