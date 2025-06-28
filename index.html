@@ -37,6 +37,16 @@
       margin-bottom: 20px;
     }
 
+    h3 {
+      background-color: #dedede;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      display: inline-block;
+      font-weight: bold;
+    }
+
     label {
       display: block;
       margin-top: 10px;
@@ -85,11 +95,15 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 1rem;
-      transition: background-color 0.3s ease;
+      transition: transform 0.2s ease, background-color 0.3s ease;
     }
 
     button.calculate:hover {
       background-color: #4a8e1c;
+    }
+
+    button.calculate:active {
+      transform: scale(0.95); /* Уменьшаем размер кнопки при нажатии */
     }
 
     .result {
@@ -176,177 +190,4 @@
     </div>
     <div class="value-control">
       <label>ИНИЦИАТИВА:</label>
-      <button data-key="playerInit" data-delta="-1">-</button>
-      <span class="value-display" id="playerInitDisplay">10</span>
-      <button data-key="playerInit" data-delta="1">+</button>
-    </div>
-
-    <h3>Параметры Противника:</h3>
-    <div class="value-control">
-      <label>СИЛА:</label>
-      <button data-key="enemyStr" data-delta="-1">-</button>
-      <span class="value-display" id="enemyStrDisplay">11</span>
-      <button data-key="enemyStr" data-delta="1">+</button>
-    </div>
-    <div class="value-control">
-      <label>ЗАЩИТА:</label>
-      <button data-key="enemyDef" data-delta="-1">-</button>
-      <span class="value-display" id="enemyDefDisplay">7</span>
-      <button data-key="enemyDef" data-delta="1">+</button>
-    </div>
-    <div class="value-control">
-      <label>ИНИЦИАТИВА:</label>
-      <button data-key="enemyInit" data-delta="-1">-</button>
-      <span class="value-display" id="enemyInitDisplay">9</span>
-      <button data-key="enemyInit" data-delta="1">+</button>
-    </div>
-
-    <div class="value-control">
-      <label>Количество АТАК:</label>
-      <button data-key="rounds" data-delta="-1">-</button>
-      <span class="value-display" id="roundsDisplay">4</span>
-      <button data-key="rounds" data-delta="1">+</button>
-    </div>
-
-    <button type="button" class="calculate" id="calculateButton">Рассчитать бой</button>
-  </form>
-
-  <div class="result" id="result" style="display:none;"></div>
-</div>
-
-<script>
-  // Храним текущие значения
-  let player = {
-    сила: 8,
-    защита: 10,
-    инициатива: 10
-  };
-
-  let enemy = {
-    сила: 11,
-    защита: 7,
-    инициатива: 9
-  };
-
-  let rounds = 4;
-
-  // Обновляем отображение значений
-  function updateValue(key, delta) {
-    if (key === 'playerStr') {
-      player.сила = Math.max(0, player.сила + delta);
-      document.getElementById('playerStrDisplay').innerText = player.сила;
-    } else if (key === 'playerDef') {
-      player.защита = Math.max(0, player.защита + delta);
-      document.getElementById('playerDefDisplay').innerText = player.защита;
-    } else if (key === 'playerInit') {
-      player.инициатива = Math.max(0, player.инициатива + delta);
-      document.getElementById('playerInitDisplay').innerText = player.инициатива;
-    } else if (key === 'enemyStr') {
-      enemy.сила = Math.max(0, enemy.сила + delta);
-      document.getElementById('enemyStrDisplay').innerText = enemy.сила;
-    } else if (key === 'enemyDef') {
-      enemy.защита = Math.max(0, enemy.защита + delta);
-      document.getElementById('enemyDefDisplay').innerText = enemy.защита;
-    } else if (key === 'enemyInit') {
-      enemy.инициатива = Math.max(0, enemy.инициатива + delta);
-      document.getElementById('enemyInitDisplay').innerText = enemy.инициатива;
-    } else if (key === 'rounds') {
-      rounds = Math.max(1, rounds + delta); // Минимум 1 атака
-      document.getElementById('roundsDisplay').innerText = rounds;
-    }
-  }
-
-  // Назначаем обработчики событий для кнопок
-  document.querySelectorAll('.value-control button').forEach(button => {
-    button.addEventListener('click', event => {
-      event.preventDefault(); // Предотвращаем стандартное поведение
-      const key = button.getAttribute('data-key');
-      const delta = parseInt(button.getAttribute('data-delta'), 10);
-      updateValue(key, delta);
-    });
-  });
-
-  // Расчёт боя
-  document.getElementById('calculateButton').addEventListener('click', simulateBattle);
-
-  function attack(attacker, defender) {
-    const damage = attacker.сила;
-
-    if (defender.защита > 0) {
-      defender.защита -= damage;
-      if (defender.защита < 0) {
-        defender.сила += defender.защита;
-        defender.защита = 0;
-      }
-    } else {
-      defender.сила -= damage;
-    }
-
-    return defender;
-  }
-
-  function simulateBattle() {
-    // Копии объектов для расчётов
-    let p = JSON.parse(JSON.stringify(player));
-    let e = JSON.parse(JSON.stringify(enemy));
-
-    let winner = null;
-    let playerAttacks = 0;
-    let enemyAttacks = 0;
-
-    // Определяем, кто ходит первым
-    let first = p.инициатива >= e.инициатива ? "player" : "enemy";
-
-    for (let i = 0; i < rounds; i++) {
-      // Атака игрока
-      if (p.сила > 0) {
-        e = attack(p, e);
-        playerAttacks++;
-        if (e.сила <= 0) {
-          winner = "Игрок";
-          break;
-        }
-      }
-
-      // Атака противника
-      if (e.сила > 0) {
-        p = attack(e, p);
-        enemyAttacks++;
-        if (p.сила <= 0) {
-          winner = "Противник";
-          break;
-        }
-      }
-    }
-
-    const resultDiv = document.getElementById('result');
-    resultDiv.style.display = 'block';
-    resultDiv.classList.remove("win", "lose", "draw", "damage-flash");
-    resultDiv.style.opacity = 0;
-
-    setTimeout(() => {
-      resultDiv.style.opacity = 1;
-    }, 10);
-
-    let resultText = `<strong>Результат после ${playerAttacks} атак Игрока и ${enemyAttacks} атак Противника:</strong><br>`;
-    resultText += `Игрок: СИЛА — ${p.сила}, ЗАЩИТА — ${p.защита}<br>`;
-    resultText += `Противник: СИЛА — ${e.сила}, ЗАЩИТА — ${e.защита}<br><br>`;
-
-    if (winner === "Игрок") {
-      resultText += "🎉 Вы победили!";
-      resultDiv.classList.add("win");
-    } else if (winner === "Противник") {
-      resultText += "💥 Вы проиграли.";
-      resultDiv.classList.add("lose");
-    } else {
-      resultText += "🤝 Ничья.";
-      resultDiv.classList.add("draw");
-    }
-
-    resultDiv.innerHTML = resultText;
-    resultDiv.classList.add("damage-flash");
-  }
-</script>
-
-</body>
-</html>
+      <button data-key="playerInit" data-delta="-1
