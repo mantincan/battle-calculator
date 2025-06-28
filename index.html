@@ -160,55 +160,55 @@
 
 <div class="calculator">
   <h2>Калькулятор боя</h2>
-  <form id="battleForm" onsubmit="return false;">
+  <form id="battleForm">
     <h3>Параметры Игрока:</h3>
     <div class="value-control">
       <label>СИЛА:</label>
-      <button onclick="updateValue(event, 'playerStr', -1)">-</button>
+      <button data-key="playerStr" data-delta="-1">-</button>
       <span class="value-display" id="playerStrDisplay">8</span>
-      <button onclick="updateValue(event, 'playerStr', 1)">+</button>
+      <button data-key="playerStr" data-delta="1">+</button>
     </div>
     <div class="value-control">
       <label>ЗАЩИТА:</label>
-      <button onclick="updateValue(event, 'playerDef', -1)">-</button>
+      <button data-key="playerDef" data-delta="-1">-</button>
       <span class="value-display" id="playerDefDisplay">10</span>
-      <button onclick="updateValue(event, 'playerDef', 1)">+</button>
+      <button data-key="playerDef" data-delta="1">+</button>
     </div>
     <div class="value-control">
       <label>ИНИЦИАТИВА:</label>
-      <button onclick="updateValue(event, 'playerInit', -1)">-</button>
+      <button data-key="playerInit" data-delta="-1">-</button>
       <span class="value-display" id="playerInitDisplay">10</span>
-      <button onclick="updateValue(event, 'playerInit', 1)">+</button>
+      <button data-key="playerInit" data-delta="1">+</button>
     </div>
 
     <h3>Параметры Противника:</h3>
     <div class="value-control">
       <label>СИЛА:</label>
-      <button onclick="updateValue(event, 'enemyStr', -1)">-</button>
+      <button data-key="enemyStr" data-delta="-1">-</button>
       <span class="value-display" id="enemyStrDisplay">11</span>
-      <button onclick="updateValue(event, 'enemyStr', 1)">+</button>
+      <button data-key="enemyStr" data-delta="1">+</button>
     </div>
     <div class="value-control">
       <label>ЗАЩИТА:</label>
-      <button onclick="updateValue(event, 'enemyDef', -1)">-</button>
+      <button data-key="enemyDef" data-delta="-1">-</button>
       <span class="value-display" id="enemyDefDisplay">7</span>
-      <button onclick="updateValue(event, 'enemyDef', 1)">+</button>
+      <button data-key="enemyDef" data-delta="1">+</button>
     </div>
     <div class="value-control">
       <label>ИНИЦИАТИВА:</label>
-      <button onclick="updateValue(event, 'enemyInit', -1)">-</button>
+      <button data-key="enemyInit" data-delta="-1">-</button>
       <span class="value-display" id="enemyInitDisplay">9</span>
-      <button onclick="updateValue(event, 'enemyInit', 1)">+</button>
+      <button data-key="enemyInit" data-delta="1">+</button>
     </div>
 
     <div class="value-control">
       <label>Количество АТАК:</label>
-      <button onclick="updateValue(event, 'rounds', -1)">-</button>
+      <button data-key="rounds" data-delta="-1">-</button>
       <span class="value-display" id="roundsDisplay">4</span>
-      <button onclick="updateValue(event, 'rounds', 1)">+</button>
+      <button data-key="rounds" data-delta="1">+</button>
     </div>
 
-    <button type="button" class="calculate" onclick="simulateBattle()">Рассчитать бой</button>
+    <button type="button" class="calculate" id="calculateButton">Рассчитать бой</button>
   </form>
 
   <div class="result" id="result" style="display:none;"></div>
@@ -231,9 +231,7 @@
   let rounds = 4;
 
   // Обновляем отображение значений
-  function updateValue(event, key, delta) {
-    event.preventDefault(); // Предотвращаем стандартное поведение
-
+  function updateValue(key, delta) {
     if (key === 'playerStr') {
       player.сила = Math.max(0, player.сила + delta);
       document.getElementById('playerStrDisplay').innerText = player.сила;
@@ -257,6 +255,19 @@
       document.getElementById('roundsDisplay').innerText = rounds;
     }
   }
+
+  // Назначаем обработчики событий для кнопок
+  document.querySelectorAll('.value-control button').forEach(button => {
+    button.addEventListener('click', event => {
+      event.preventDefault(); // Предотвращаем стандартное поведение
+      const key = button.getAttribute('data-key');
+      const delta = parseInt(button.getAttribute('data-delta'), 10);
+      updateValue(key, delta);
+    });
+  });
+
+  // Расчёт боя
+  document.getElementById('calculateButton').addEventListener('click', simulateBattle);
 
   function attack(attacker, defender) {
     const damage = attacker.сила;
