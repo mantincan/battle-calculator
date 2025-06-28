@@ -43,16 +43,40 @@
       font-weight: bold;
     }
 
-    input[type="number"] {
-      padding: 8px;
-      width: 80px;
-      margin-top: 5px;
+    .value-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .value-control button {
+      padding: 8px 12px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      background-color: #579e21;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .value-control button:hover {
+      background-color: #4a8e1c;
+    }
+
+    .value-display {
+      padding: 8px 12px;
+      margin: 0 5px;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 1rem;
+      text-align: center;
+      width: 50px;
     }
 
-    button {
+    button.calculate {
       margin-top: 20px;
       padding: 12px 20px;
       background-color: #579e21;
@@ -64,7 +88,7 @@
       transition: background-color 0.3s ease;
     }
 
-    button:hover {
+    button.calculate:hover {
       background-color: #4a8e1c;
     }
 
@@ -114,6 +138,22 @@
       50% { background-color: #ffdddd; }
       100% { background-color: transparent; }
     }
+
+    /* Адаптивность */
+    @media (max-width: 600px) {
+      .calculator {
+        padding: 20px;
+        max-width: 90%;
+      }
+
+      .value-display {
+        width: 40px;
+      }
+
+      button.calculate {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -122,24 +162,100 @@
   <h2>Калькулятор боя</h2>
   <form id="battleForm">
     <h3>Параметры Игрока:</h3>
-    <label>СИЛА: <input type="number" name="playerStr" value="8"></label><br>
-    <label>ЗАЩИТА: <input type="number" name="playerDef" value="10"></label><br>
-    <label>ИНИЦИАТИВА: <input type="number" name="playerInit" value="10"></label><br>
+    <div class="value-control">
+      <label>СИЛА:</label>
+      <button onclick="updateValue('playerStr', -1)">-</button>
+      <span class="value-display" id="playerStrDisplay">8</span>
+      <button onclick="updateValue('playerStr', 1)">+</button>
+    </div>
+    <div class="value-control">
+      <label>ЗАЩИТА:</label>
+      <button onclick="updateValue('playerDef', -1)">-</button>
+      <span class="value-display" id="playerDefDisplay">10</span>
+      <button onclick="updateValue('playerDef', 1)">+</button>
+    </div>
+    <div class="value-control">
+      <label>ИНИЦИАТИВА:</label>
+      <button onclick="updateValue('playerInit', -1)">-</button>
+      <span class="value-display" id="playerInitDisplay">10</span>
+      <button onclick="updateValue('playerInit', 1)">+</button>
+    </div>
 
     <h3>Параметры Противника:</h3>
-    <label>СИЛА: <input type="number" name="enemyStr" value="11"></label><br>
-    <label>ЗАЩИТА: <input type="number" name="enemyDef" value="7"></label><br>
-    <label>ИНИЦИАТИВА: <input type="number" name="enemyInit" value="9"></label><br>
+    <div class="value-control">
+      <label>СИЛА:</label>
+      <button onclick="updateValue('enemyStr', -1)">-</button>
+      <span class="value-display" id="enemyStrDisplay">11</span>
+      <button onclick="updateValue('enemyStr', 1)">+</button>
+    </div>
+    <div class="value-control">
+      <label>ЗАЩИТА:</label>
+      <button onclick="updateValue('enemyDef', -1)">-</button>
+      <span class="value-display" id="enemyDefDisplay">7</span>
+      <button onclick="updateValue('enemyDef', 1)">+</button>
+    </div>
+    <div class="value-control">
+      <label>ИНИЦИАТИВА:</label>
+      <button onclick="updateValue('enemyInit', -1)">-</button>
+      <span class="value-display" id="enemyInitDisplay">9</span>
+      <button onclick="updateValue('enemyInit', 1)">+</button>
+    </div>
 
-    <label>Количество АТАК: <input type="number" name="rounds" value="4"></label><br>
+    <div class="value-control">
+      <label>Количество АТАК:</label>
+      <button onclick="updateValue('rounds', -1)">-</button>
+      <span class="value-display" id="roundsDisplay">4</span>
+      <button onclick="updateValue('rounds', 1)">+</button>
+    </div>
 
-    <button type="button" onclick="simulateBattle()">Рассчитать бой</button>
+    <button type="button" class="calculate" onclick="simulateBattle()">Рассчитать бой</button>
   </form>
 
   <div class="result" id="result" style="display:none;"></div>
 </div>
 
 <script>
+  // Храним текущие значения
+  let player = {
+    сила: 8,
+    защита: 10,
+    инициатива: 10
+  };
+
+  let enemy = {
+    сила: 11,
+    защита: 7,
+    инициатива: 9
+  };
+
+  let rounds = 4;
+
+  // Обновляем отображение значений
+  function updateValue(key, delta) {
+    if (key === 'playerStr') {
+      player.сила = Math.max(0, player.сила + delta);
+      document.getElementById('playerStrDisplay').innerText = player.сила;
+    } else if (key === 'playerDef') {
+      player.защита = Math.max(0, player.защита + delta);
+      document.getElementById('playerDefDisplay').innerText = player.защита;
+    } else if (key === 'playerInit') {
+      player.инициатива = Math.max(0, player.инициатива + delta);
+      document.getElementById('playerInitDisplay').innerText = player.инициатива;
+    } else if (key === 'enemyStr') {
+      enemy.сила = Math.max(0, enemy.сила + delta);
+      document.getElementById('enemyStrDisplay').innerText = enemy.сила;
+    } else if (key === 'enemyDef') {
+      enemy.защита = Math.max(0, enemy.защита + delta);
+      document.getElementById('enemyDefDisplay').innerText = enemy.защита;
+    } else if (key === 'enemyInit') {
+      enemy.инициатива = Math.max(0, enemy.инициатива + delta);
+      document.getElementById('enemyInitDisplay').innerText = enemy.инициатива;
+    } else if (key === 'rounds') {
+      rounds = Math.max(1, rounds + delta); // Минимум 1 атака
+      document.getElementById('roundsDisplay').innerText = rounds;
+    }
+  }
+
   function attack(attacker, defender) {
     const damage = attacker.сила;
 
@@ -157,23 +273,6 @@
   }
 
   function simulateBattle() {
-    const form = document.getElementById('battleForm');
-
-    // Параметры
-    let player = {
-      сила: parseInt(form.playerStr.value),
-      защита: parseInt(form.playerDef.value),
-      инициатива: parseInt(form.playerInit.value)
-    };
-
-    let enemy = {
-      сила: parseInt(form.enemyStr.value),
-      защита: parseInt(form.enemyDef.value),
-      инициатива: parseInt(form.enemyInit.value)
-    };
-
-    let rounds = parseInt(form.rounds.value);
-
     // Копии объектов для расчётов
     let p = JSON.parse(JSON.stringify(player));
     let e = JSON.parse(JSON.stringify(enemy));
